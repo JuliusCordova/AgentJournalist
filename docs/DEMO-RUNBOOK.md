@@ -29,3 +29,18 @@ Aprobar expediente y generar borrador atribuido, con [DESCARGO PENDIENTE] cuando
 
 ## Evidencia de éxito
 Capturar ejecución, versiones, aprobación con actor y fecha, trazabilidad H/D/V y estadísticas de evals. No confundir confianza del modelo con veracidad periodística.
+
+
+## Escena E — GraphRAG: conectar los puntos
+- Abrir un expediente precargado con 5–10 fuentes y entidades relacionadas.
+- Visualizar grafo de noticias, documentos, organizaciones y proveedores con etiquetas de estado.
+- Preguntar: «¿Qué fuentes conectan al proveedor A con los contratos de la entidad B?» y revelar la ruta de dos o tres saltos con enlaces a documentos.
+- Seleccionar una arista y comprobar su evidencia textual y fecha.
+- Repetir la misma pregunta usando recuperación convencional, mostrando diferencias reales, no resultados inventados.
+- Mostrar un enlace ambiguo/incorrecto etiquetado no verificado y excluirlo del borrador.
+
+## Acceptance adicional GraphRAG
+- Ninguna arista factual carece de procedencia.
+- El panel permite distinguir relación documentada de inferida.
+- Métricas baseline RAG vs GraphRAG: calidad de caminos, costo y latencia.
+- Los cuatro gates continúan activos al utilizar GraphRAG.
