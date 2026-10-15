@@ -51,3 +51,28 @@ Se posterga Agent Engine administrado hasta medir necesidad real de sesiones, es
 
 ## Validación antes de promoción
 Comprobar costo/tokens por investigación, latencia, citas, bloqueos de aprobación, resistencia a inyección y factibilidad de consulta de fuentes.
+
+
+## GraphRAG FAST DEMO (decisión ADR-002)
+GraphRAG entra **en alcance de demostración**, de acuerdo con `DevPattern/patterns/pattern-packs/graphrag.md`, por preguntas periodísticas de múltiples fuentes y relaciones entre empresas, contratos, individuos, hechos y declaraciones.
+
+```mermaid
+flowchart LR
+  S[Fuentes y expedientes] --> N[Normalizar + identificar procedencia]
+  N --> X[Extraer entidades/relaciones]
+  X --> K[(Knowledge graph por caso)]
+  K --> Q[Local/multi-hop retrieval]
+  N --> B[Baseline: búsqueda convencional]
+  Q --> C[Comparador RAG vs GraphRAG]
+  B --> C
+  C --> V[Verificación con evidencia]
+  V --> UI[Grafo interactivo y expediente]
+```
+
+**FAST PoC pragmática:** grafo tipado en memoria (NetworkX o equivalente) serializado a JSON en Cloud Storage; Firestore mantiene metadatos/versiones. El adaptador `graph_repository` permite reemplazarlo por un almacén de grafos cuando sea justificado. No introducir servicio de base de grafos solo por marketing.
+
+**Experiencia visible:** seleccionar nodo de empresa → ver contratos relacionados → filtrar por fechas y proveedores → abrir arista con fuente original → consultar camino de dos o tres saltos; diferenciar asociación documentada de inferencia. Mostrar comparativa contra RAG convencional para una pregunta relacional.
+
+**Integridad:** cada arista mantiene `evidence_ids`, `retrieved_at`, `relation_type`, `status`; para relaciones ambiguas solicitar validación humana. La visualización es ayuda exploratoria, no prueba legal ni veredicto automático.
+
+**Evaluación:** benchmark local/global predefinido y golden set de enlaces; trazabilidad de aristas, precisión relacional, tiempo/costo e índice de inferencias falsas. Seguir patrón DevPattern: solo promover especialización si mejora la recuperación tradicional.
