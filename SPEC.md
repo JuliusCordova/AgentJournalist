@@ -102,3 +102,20 @@ Fase 3: Cloud Run + Firestore/Cloud Storage, monitoreo y ensayo con periodistas.
 
 ## 14. Riesgos y decisiones abiertas
 Disponibilidad de fuentes web y límites de grounding; sesgo y circularidad de fuentes; difamación; condiciones de uso; coste por reintentos; permisos de edición. La elección del proveedor de búsqueda se evalúa antes de codificar su adaptador.
+
+
+## 15. GraphRAG — alcance demostrativo obligatorio (v0.2)
+**Objetivo:** demostrar investigación relacional entre entidades, afirmaciones, fuentes y evidencias, no sustituir la verificación por un grafo.
+- FR-GR-01: extraer entidades (persona, organización, contrato, fecha, afirmación, noticia, documento) y relaciones tipadas con `source_evidence_id`.
+- FR-GR-02: presentar un grafo interactivo que permita seleccionar un nodo/arista y abrir el documento o fragmento probatorio.
+- FR-GR-03: responder al menos tres consultas de múltiples saltos (¿qué documentos conectan dos entidades?, ¿qué afirmaciones comparten fuente?, ¿qué entidades aparecen en contratos relacionados?).
+- FR-GR-04: permitir comparar respuesta con recuperación convencional y con GraphRAG sobre el mismo corpus y pregunta.
+- FR-GR-05: etiquetar relaciones como `documented`, `inferred` o `unverified`; relaciones inferidas no pueden convertirse automáticamente en hechos confirmados.
+- FR-GR-06: detectar y mostrar entidades ambiguas y duplicadas sin resolver identidad automáticamente cuando haya incertidumbre.
+- FR-GR-07: preservar procedencia y fecha de todas las aristas; no inferir culpabilidad, irregularidad ni vínculo personal por coocurrencia.
+- AC-GR-01: toda relación factual mostrada tiene evidencia original alcanzable; sin ella se etiqueta no verificada.
+- AC-GR-02: consultas locales y relacionales del golden set se ejecutan tanto en baseline como en GraphRAG, documentando calidad/costo/latencia.
+- AC-GR-03: grafo visual y consultas operan sin saltarse G1–G4.
+- Modelo lógico ampliado: `GraphNode {node_id, type, label, aliases[], case_id}`; `GraphEdge {edge_id, from_id, to_id, relation_type, evidence_ids[], confidence_label, status, case_id}`.
+- Límites: grafo por caso, corpus acotado y sin extracción masiva. Una representación NetworkX/JSON puede usarse para la Fast PoC; persistencia en Cloud Storage y metadatos en Firestore. No exigir base de grafos dedicada ni clustering de comunidades hasta que lo justifique la prueba.
+- Exit gate: medir utilidad en preguntas de relación frente a baseline RAG, con métricas de exactitud por arista, cobertura de procedencia, latencia y costo. El criterio de promoción se fija antes del benchmark.
