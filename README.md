@@ -14,3 +14,7 @@ Patrones de [DevPattern](https://github.com/JuliusCordova/DevPattern). Los skill
 
 ## Regla central
 **La IA investiga y propone; los periodistas deciden.** Aprobaciones fuera del LLM, evidencia por afirmación y ninguna publicación automática.
+
+
+## Capacidad adicional: GraphRAG
+La Fast PoC incluye un grafo interactivo de entidades, relaciones y evidencias, con consultas multi-hop y benchmark visible contra recuperación tradicional. Consultar [ADR GraphRAG](docs/ARCHITECTURE.md#graphrag-fast-demo-decisión-adr-002) y [SPEC.md](SPEC.md#15-graphrag--alcance-demostrativo-obligatorio-v02).
