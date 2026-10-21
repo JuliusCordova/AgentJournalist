@@ -8,7 +8,7 @@
 | Cargar artículo ficticio K-01 | FR-T01, FR-T07, FR-T08 | CA02, CA06, CA17 | texto y golden set versionado |
 | Seleccionar documentos oficiales | FR-T02, FR-T06 | CA03 | lista de documentos efectivos por sesión |
 | Cargar PDF digital | FR-T03, FR-T05 | CA04 | fragmento y número de página correctos |
-| Fuente URL segura | FR-T04, FR-011, FR-H URL | CA05, HA06 | rechazo de URL no autorizada/SSRF |
+| Fuente URL segura | FR-T04, FR-011, §19.4 | CA05, HA06 | rechazo de URL no autorizada/SSRF |
 | Recuperar evidencia | FR-T09 a FR-T12 | CA07, CA08, CA16, HA01, HA02 | citas verificadas y abstenciones |
 | Tablero | FR-T13, FR-T14 | CA06, HA03 | estados, conteos, IRD-1 y cobertura |
 | Corrección formal/informal | FR-T15 a FR-T18 | CA09, CA10 | diff, evidencia y conservación semántica |
