@@ -76,3 +76,29 @@ flowchart LR
 **Integridad:** cada arista mantiene `evidence_ids`, `retrieved_at`, `relation_type`, `status`; para relaciones ambiguas solicitar validación humana. La visualización es ayuda exploratoria, no prueba legal ni veredicto automático.
 
 **Evaluación:** benchmark local/global predefinido y golden set de enlaces; trazabilidad de aristas, precisión relacional, tiempo/costo e índice de inferencias falsas. Seguir patrón DevPattern: solo promover especialización si mejora la recuperación tradicional.
+
+
+## ADR-003 — Verificación probabilística explicable
+Agregar módulo `claim_assessment` **después de verificación/GraphRAG** y antes del expediente:
+
+```mermaid
+flowchart LR
+ A[Noticia] --> C[Claims atómicos]
+ C --> R[RAG y GraphRAG]
+ R --> E[Evaluación de evidencia]
+ E --> V[Veredicto por claim + abstención]
+ V --> K{Calibrador validado?}
+ K -->|Sí| P[p_false calibrada + versión]
+ K -->|No| N[Sin porcentaje / No calibrada]
+ P --> D[Expediente auditable]
+ N --> D
+ D --> H[Gate humano]
+```
+
+**Separación estricta:** puntaje de similitud vectorial, confianza autodeclarada del LLM, conteo de fuentes y probabilidad calibrada no son equivalentes. El conteo de fuentes debe deduplicar republicaciones y rastrear origen.
+
+**GCP Fast PoC:** Python/scikit-learn para métricas y calibración offline en notebook o Cloud Run Job bajo demanda; guardar resultados JSON y artefactos de evaluación versionados en Cloud Storage. FastAPI sirve `ClaimAssessment` y `EvaluationRun`; Firestore almacena estado y revisión humana. No usar servicios ML adicionales hasta justificar volumen.
+
+**UI:** panel por afirmación con estado, fuentes a favor/en contra, cobertura, confianza en evidencia cualitativa y, solo si calibrado, probabilidad y advertencia de dominio/fecha. Una vista de métricas muestra precisión/recall/F1, Brier/ECE, abstención y comparación RAG vs GraphRAG. Evitar «noticia 95 % falsa» sin calibración específica a nivel noticia.
+
+**No-go:** probabilidades fabricadas por prompt, entrenamiento/evaluación sobre el mismo conjunto, sumar fuentes no independientes, inferir intención del emisor y convertir asociaciones del grafo en culpabilidad.
