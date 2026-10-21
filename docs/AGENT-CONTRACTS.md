@@ -32,7 +32,7 @@ Arquitectura: **seis agentes ADK en proceso** + **dos motores especializados (Gr
 }
 ```
 
-## Comp puertas por perfil
+## Compuertas por perfil
 - `REDACCION`: G1 plan, G2 anomalías, G3 expediente, G4 borrador: **4 personas/decisiones humanas**.
 - `TALLER`: G1 verificar, G2 sistema `AUTO_NOT_APPLICABLE`, G3 corregir, G4 revisión antes de exportación: **3 acciones humanas, una transición técnica**.
 - Cualquier rechazo, invalidación de hash o cambio de fuente obliga a recomputar artefactos dependientes.
