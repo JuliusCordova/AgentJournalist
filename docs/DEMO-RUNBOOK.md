@@ -59,3 +59,6 @@ Capturar ejecución, versiones, aprobación con actor y fecha, trazabilidad H/D/
 - Un LLM que responde «95 % seguro» sin calibración no genera `p_false=0.95`.
 - Separar evaluación de recuperación, clasificación y calibración.
 - Cualquier cambio de veredicto mantiene rastro editorial y versión.
+
+## Guion actualizado v0.5
+Para perfil TALLER y criterios reforzados, utilizar [DEMO-RUNBOOK-v0.5.md](DEMO-RUNBOOK-v0.5.md). El presente documento conserva el guion previo del perfil REDACCION. Todos los casos emplean evidencia y fuentes verificables; los fixtures sintéticos se rotulan como ficción.
