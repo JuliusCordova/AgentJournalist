@@ -102,3 +102,6 @@ flowchart LR
 **UI:** panel por afirmación con estado, fuentes a favor/en contra, cobertura, confianza en evidencia cualitativa y, solo si calibrado, probabilidad y advertencia de dominio/fecha. Una vista de métricas muestra precisión/recall/F1, Brier/ECE, abstención y comparación RAG vs GraphRAG. Evitar «noticia 95 % falsa» sin calibración específica a nivel noticia.
 
 **No-go:** probabilidades fabricadas por prompt, entrenamiento/evaluación sobre el mismo conjunto, sumar fuentes no independientes, inferir intención del emisor y convertir asociaciones del grafo en culpabilidad.
+
+## Actualización v0.5
+El perfil `TALLER` y los requisitos de seguridad/operación prevalecen según [ADR v0.5](ARCHITECTURE-DECISIONS-v0.5.md) y [SPEC §19](../SPEC.md#19-fortalecimiento-técnico-y-criterios-de-salida-v05). GraphRAG y scoring permanecen como motores compartidos, **no** agentes adicionales. En TALLER, G2 es transición sistémica y no aprobación humana; no interpretar los cuatro gates lógicos como cuatro firmas de periodistas.
