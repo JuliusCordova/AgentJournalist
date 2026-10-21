@@ -119,3 +119,55 @@ Disponibilidad de fuentes web y límites de grounding; sesgo y circularidad de f
 - Modelo lógico ampliado: `GraphNode {node_id, type, label, aliases[], case_id}`; `GraphEdge {edge_id, from_id, to_id, relation_type, evidence_ids[], confidence_label, status, case_id}`.
 - Límites: grafo por caso, corpus acotado y sin extracción masiva. Una representación NetworkX/JSON puede usarse para la Fast PoC; persistencia en Cloud Storage y metadatos en Firestore. No exigir base de grafos dedicada ni clustering de comunidades hasta que lo justifique la prueba.
 - Exit gate: medir utilidad en preguntas de relación frente a baseline RAG, con métricas de exactitud por arista, cobertura de procedencia, latencia y costo. El criterio de promoción se fija antes del benchmark.
+
+
+## 16. Métricas de verificación probabilística (v0.3)
+**Intención:** permitir que el periodista vea evidencia, estado de verificación e incertidumbre cuantificada sin presentar la confianza verbal de Gemini como una probabilidad científicamente validada.
+
+### Decisiones de producto
+- Unidad primaria: **afirmación atómica** (`claim_id`), no noticia completa. Una noticia puede combinar afirmaciones verdaderas, falsas y no verificables.
+- Estado editorial por afirmación: `SUPPORTED`, `REFUTED`, `MISLEADING`, `OUT_OF_CONTEXT`, `INSUFFICIENT_EVIDENCE`; se conserva revisión humana.
+- Probabilidad `p_false` solo si hay clasificador calibrado y validado sobre dataset etiquetado fuera de muestra y dominio comparable. Si no, `p_false=null` y `calibration_status=NOT_CALIBRATED`.
+- Presentar por separado **fortaleza/calidad de evidencia** (rúbrica ordinal con fuentes y procedencia), **cobertura** (qué parte de la noticia se pudo verificar) y **probabilidad** (estimación estadística con versión de modelo).
+- No sumar porcentajes de 'credibilidad de fuentes' inventados ni promediar probabilidades de afirmaciones correlacionadas como si fuesen independientes.
+- `INSUFFICIENT_EVIDENCE` / ambigüedad / fuentes dependientes implican abstención de veredicto automático, aun con una señal de riesgo alta.
+- El resultado nunca habilita publicación ni acusaciones; se mantienen cuatro HITL gates.
+
+### Requisitos
+- FR-PV-01: extraer y registrar afirmaciones atómicas, alcance, emisor, fecha de contexto y enlaces H/D/V.
+- FR-PV-02: producir estados verificables y explicar por qué se eligió cada uno, citando evidencia independiente y contradicciones.
+- FR-PV-03: exponer conteos por estado, porcentaje de afirmaciones verificadas, cantidad de fuentes independientes y procedencia de cada cita.
+- FR-PV-04: mostrar `p_false` como valor [0,1] solo si el calibrador fue evaluado; incluir versión de modelo, dataset de calibración, fecha y dominio. De lo contrario no mostrar porcentajes de falsedad.
+- FR-PV-05: evaluar comparativamente pipeline RAG vs GraphRAG y ejecución por agentes sobre golden set etiquetado, estratificado por tema, fuente y tiempo.
+- FR-PV-06: persistir decisión editorial, evidencia, predicción, versión y correcciones para auditoría.
+- FR-PV-07: mostrar la cobertura incompleta y abstenerse cuando no alcance el umbral de evidencia definido en evaluación.
+- FR-PV-08: admitir degradación segura si faltan fuentes, referencias, calibrador o modelo.
+
+### Esquema
+`ClaimAssessment {claim_id, case_id, text, verdict, evidence_ids[], contradicting_evidence_ids[], evidence_strength, independent_source_count, p_false:float|null, calibration_status, model_version?, evaluated_at, abstain_reason?, reviewer_status}`
+`EvaluationRun {run_id, dataset_version, model_version, method, split_policy, n_cases, metric_values, calibration_method?, created_at}`
+`NewsSummary {case_id, claim_count, assessed_count, supported_count, refuted_count, misleading_count, out_of_context_count, insufficient_count, coverage_rate, overall_status, overall_p_false:null}`
+
+El resumen de noticia NO tiene `overall_p_false` numérico por defecto: cualquier agregación estadística futura requiere modelo propio entrenado para nivel de noticia, datos de dependencia y validación.
+
+### Métricas de evaluación de clasificación
+- Matriz de confusión por clase; precisión, recall y F1 macro (evitar que clase mayoritaria oculte errores).
+- Para etiqueta binaria false/no-false únicamente en subset adjudicado: precision/recall/F1 de clase falsa, PR-AUC y ROC-AUC cuando proceda.
+- Probabilísticas (si existe calibrador): Brier score, log loss y Expected Calibration Error (ECE), con curva de confiabilidad y tamaños por bin. Reportar intervalos de confianza por bootstrap si el tamaño lo permite.
+- Calidad de recuperación: recall@k de evidencias, corrección de citas y exactitud de relaciones/aristas GraphRAG, con contraste contra RAG simple.
+- Seguridad: hallucinated-citation rate, false-accusation rate y gate-bypass rate (objetivo 0 en pruebas).
+- Utilidad: tasa de abstención, riesgo selectivo al abstenerse, cobertura, latencia y costo por noticia.
+
+### Protocolo de evaluación
+1. Crear golden set de afirmaciones y evidencias con revisión humana doble y protocolo para desacuerdos; preferir casos públicos de fact-checking y registrar licencias/contexto.
+2. Separar entrenamiento, calibración y prueba sin fuga por noticia, fuente o republicación; corte temporal cuando aplique.
+3. Implementar baseline sin calibración: estados y métricas descriptivas, **sin probabilidades artificiales**.
+4. Si hay muestras suficientes: entrenar un clasificador de falsedad, calibrar en holdout (Platt/sigmoid o isotónica según volumen) y medir en test separado.
+5. Reportar desempeño por temática, idioma y nivel de evidencia. Documentar drift y límite de aplicabilidad.
+
+### Acceptance
+- AC-PV-01: sin calibrador validado, UI muestra «Probabilidad no calibrada/no disponible» y ninguna cifra de falsedad.
+- AC-PV-02: reporte de pruebas incluye matriz de confusión, precision/recall/F1, cobertura y abstención; probabilidades solo si hay evaluación Brier/ECE.
+- AC-PV-03: noticia con dos afirmaciones de veredictos distintos conserva resultados individuales y no inventa porcentaje único.
+- AC-PV-04: toda clasificación incluye citas trazables o abstención explícita.
+- AC-PV-05: el periodista puede inspeccionar por qué un caso quedó inconcluso y puede corregirlo sin borrar historial.
