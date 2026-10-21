@@ -18,3 +18,7 @@ Patrones de [DevPattern](https://github.com/JuliusCordova/DevPattern). Los skill
 
 ## Capacidad adicional: GraphRAG
 La Fast PoC incluye un grafo interactivo de entidades, relaciones y evidencias, con consultas multi-hop y benchmark visible contra recuperación tradicional. Consultar [ADR GraphRAG](docs/ARCHITECTURE.md#graphrag-fast-demo-decisión-adr-002) y [SPEC.md](SPEC.md#15-graphrag--alcance-demostrativo-obligatorio-v02).
+
+
+## Evaluación de noticias e incertidumbre
+El SDD incorpora veredictos por afirmación, trazabilidad, métricas de clasificación, cobertura, abstención y probabilidad de falsedad **solo si ha sido calibrada y evaluada estadísticamente**. No se muestran porcentajes inferidos libremente por el LLM. Ver [SPEC](SPEC.md#16-métricas-de-verificación-probabilística-v03).

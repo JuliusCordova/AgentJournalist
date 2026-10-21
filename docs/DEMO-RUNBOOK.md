@@ -44,3 +44,18 @@ Capturar ejecución, versiones, aprobación con actor y fecha, trazabilidad H/D/
 - El panel permite distinguir relación documentada de inferida.
 - Métricas baseline RAG vs GraphRAG: calidad de caminos, costo y latencia.
 - Los cuatro gates continúan activos al utilizar GraphRAG.
+
+
+## Escena F — Métricas de verificación e incertidumbre
+- Introducir noticia con varias afirmaciones; presentar estado por afirmación, citas y contradicciones.
+- Abrir panel de evaluación con matriz de confusión, precision/recall/F1, cobertura y tasa de abstención del golden set.
+- Mostrar un caso de evidencia insuficiente: la app **se abstiene**, no presenta cifra fabricada.
+- Si existe calibrador entrenado y testeado, mostrar `p_false`, Brier/ECE y curva de confiabilidad; si no, etiqueta «Probabilidad aún no calibrada».
+- Contrastar RAG versus GraphRAG en corrección de relaciones y recuperación de evidencia (mismo conjunto de casos).
+- Confirmar que un resultado estadístico nunca salta G3/G4 ni publica.
+
+## Pruebas de aceptación probabilísticas
+- Un caso compuesto no se reduce a porcentaje único por promedio simple.
+- Un LLM que responde «95 % seguro» sin calibración no genera `p_false=0.95`.
+- Separar evaluación de recuperación, clasificación y calibración.
+- Cualquier cambio de veredicto mantiene rastro editorial y versión.
